@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 초등학교 정보공시 안내</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); transition: all 0.2s ease; border: 2px solid transparent; }
+        .glass-card:hover { transform: translateY(-4px); border-color: #e2e8f0; }
+        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .highlight-card { border-color: #3b82f6 !important; background-color: #eff6ff !important; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2); }
+        .name-match { background-color: #fef08a; font-weight: bold; padding: 0 2px; border-radius: 2px; color: #1e293b; }
+        .verification-badge { background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b; }
+        
+        /* 모달 내 텍스트 크기 강화 */
+        .modal-text-lg { font-size: 1.05rem; line-height: 1.7; }
+        .modal-label { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .done-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .done-active { background-color: #10b981 !important; color: white !important; border-color: #059669 !important; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- 상단 헤더 -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800 mb-6 tracking-tight">🏫 2026년 제1차(4월) 초등학교 정보공시</h1>
+            
+            <div class="bg-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6 text-left">
+                <h3 class="font-bold text-xl mb-3"><i class="fas fa-school mr-2"></i>초등 공시 핵심 안내</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+                        <p class="font-bold mb-1 underline decoration-blue-300">문의처</p>
+                        <p class="text-blue-100 font-medium tracking-wide">☎ 정보공시 콜센터: 1544-0079 (2-1)</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+                        <p class="font-bold mb-1 underline decoration-blue-300">필수 확인</p>
+                        <p class="text-blue-100 font-medium">나이스 [학교정보관리] 현행화 후 공시 시작</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border-2 border-red-100 rounded-3xl p-5 mb-8 shadow-sm flex flex-col md:flex-row justify-around items-center gap-4">
+                <div class="text-red-600 font-bold"><i class="fas fa-calendar-check mr-2"></i>초등 정시 1차 마감 일정</div>
+                <div class="flex gap-8">
+                    <div class="text-center"><p class="text-xs text-slate-500">작성자 마감</p><p class="font-bold text-red-700">4. 8.(수)</p></div>
+                    <div class="text-center border-x px-8 border-red-100"><p class="text-xs text-slate-500">확인자 마감</p><p class="font-bold text-red-700">4. 10.(금)</p></div>
+                    <div class="text-center"><p class="text-xs text-slate-500">최종 제출</p><p class="font-bold text-red-700">4. 14.(화)</p></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 검색창 -->
+        <div class="sticky top-4 z-10 mb-10">
+            <div class="relative group">
+                <input type="text" id="nameSearch" autocomplete="off"
+                    placeholder="담당자 성명을 입력하세요 (예: 손혜림)" 
+                    class="w-full p-6 pl-14 rounded-2xl border-4 border-white shadow-2xl focus:border-blue-500 focus:outline-none transition-all text-xl font-bold bg-white/80 backdrop-blur-md">
+                <i class="fas fa-user-search absolute left-6 top-7 text-blue-500 text-xl"></i>
+            </div>
+        </div>
+
+        <!-- 항목 보드 -->
+        <div id="itemGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <!-- 상세 모달 -->
+        <div id="modal" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col transition-all">
+                <div id="modalContent" class="p-8 md:p-10 overflow-y-auto flex-grow"></div>
+                <div class="p-6 bg-slate-50 border-t flex justify-center">
+                    <button onclick="closeModal()" class="w-full max-w-xs py-4 bg-slate-800 text-white rounded-2xl font-bold hover:bg-slate-700 transition-all transform active:scale-95 shadow-lg text-lg">창 닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 초기 데이터 로드
+        const initialGongsiData = [
+            { id: "2-가", title: "학교교육과정 편성·운영 및 평가에 관한 사항", writer: "김소리", checker: "곽성욱", type: "직접입력", 
+              desc:`• 자료 기준일: 2026. 4. 1 \n• 공시 횟수: 연 1회`,
+              method: "파일 탑재 (용량 10MB 이하)",
+            },
+            { id: "2-다", title: "수업공개 계획", writer: "장영미", checker: "김소리", type: "직접입력", 
+              desc: `• 자료 기준일 4월: 26. 1학기 / 9월: 26. 2학기`,
+              method: "파일 탑재",
+            },
+            { id: "2-라", title: "교육운영 특색사업 계획", writer: "김소리", checker: "곽성욱", type: "직접입력", 
+              desc: `• 자료 기준일: 26. 4. 1 \n• 공시횟수: 연 1회`,
+              method: "복합 장표",
+            },
+            { id: "4-가", title: "교과별(학년별) 교수·학습 및 평가계획", writer: "홍인지", checker: "김소리", type: "직접입력", 
+              desc: `• 자료 기준일: 4월: 26. 1학기 / 9월: 26. 2학기\n• 공시횟수: 연 2회`,
+              method: "파일 탑재",
+            },
+            { id: "10-가", title: "보건관리 현황", writer: "박연정", checker: "이영미", type: "원자료취합", 
+              desc: `• 자료 기준일\n① 보건실 이용현황(25학년도)\n② 보건 및 건강증진 계획(26학년도 4월)\n• 공시횟수: 연 1회`,
+              method: "복합 장표",
+              collect: { 
+                items: "보건실 면적, 침대 수, 세면대, 환기시설 등", 
+                path: "[나이스]-[보건]-[보건실관리]-[보건실시설및기구현황관리]", 
+                manual: "나이스에서 시설 현황 저장 후 공시 시스템에서 [가져오기] 수행"
+              }
+            },
+            { id: "10-나", title: "환경위생관리 현황", writer: "유금훈", checker: "이영미", type: "원자료취합", 
+              desc: "• 공시 횟수: 연 1회\n• 자료 기준일: 25학년도",
+              method: "복합 장표",
+              collect: { 
+                items: "공기질 정기점검, 정수기 수질, 저수조 청소 등", 
+                path: "[나이스]-[교내위생점검]-[공기질/먹는물관리]", 
+                manual: "나이스의 최근 점검 데이터를 기반으로 취합"
+              }
+            },
+            { id: "10-다", title: "시설안전 점검 현황", writer: "황혜진", checker: "김현전", type: "직접입력", 
+              desc: "• 자료 기준일: 25학년도\n• 공시 횟수: 연 1회",
+              method: "직접입력",
+            },
+            { id: "10-라", title: "안전교육 계획 및 실시현황", writer: "김혜경", checker: "황은경", type: "직접입력", 
+              desc: "• 자료 기준일\n① 안전교육 실시 현황(25학년도)\n② 안전교육 계획(26.4.1)\n• 공시횟수: 연 1회",
+              method: "복합장표",
+            },
+            { id: "11-가-1", title: "학교폭력 예방 및 대책 실시계획", writer: "황은경", checker: "정미선", type: "직접입력", 
+              desc: "• 자료 기준일: 26. 4\n• 공시횟수: 연 1회",
+              method: "파일 탑재",
+            },
+            { id: "11-가-2", title: "대상별 학교폭력 예방교육 실적", writer: "황은경", checker: "정미선", type: "직접입력", 
+              desc: "• 자료 기준일: 25학년 1, 2학기\n• 공시횟수: 연 1회",
+              method: "복합 장표",
+            },
+            { id: "11-다", title: "학교폭력대책심의위원회 심의 결과", writer: "황은경", checker: "정미선", type: "직접입력", 
+              desc: "• 자료 기준일: 25학년 1, 2학기\n• 공시횟수: 연 1회",
+              method: "직접입력",
+            },
+            { id: "11-라", title: "학교의 장의 학교폭력사건 자체해결 결과", writer: "황은경", checker: "정미선", type: "직접입력", 
+              desc: "• 자료 기준일: 25학년 1, 2학기\n• 공시횟수: 연 1회",
+              method: "직접입력",
+            },
+            { id: "15-마", title: "학생 학부모 상담 계획 및 실시현황", writer: "김가연", checker: "황은경", type: "직접입력", 
+              desc: "• 자료 기준일: ① 상담실적, ② 상담·운영계획\n• 공시횟수: ① 25학년도, ② 26. 4",
+              method: "복합 장표",
+            },
+            { id: "15-자", title: "학생의 체력 증진에 관한 사항", writer: "이영미", checker: "이영미", type: "원자료취합", 
+              desc: "• 자료 기준일: 25학년도\n• 공시횟수: 연 1회",
+              method: "전체 취합",
+              collect: { 
+                path: "[나이스]-[PAPS]-[통계및현황]-[PAPS제출]", 
+                manual: "전년도 말(2학기) 실시 결과를 취합함"
+              }
+            },
+            { id: "15-차", title: "학교평가지표 및 평가종합의견", writer: "김소리", checker: "곽성욱", type: "직접입력", 
+              desc: "• 자료 기준일: 25학년도\n• 공시횟수: 연 1회",
+              method: "파일 탑재",
+            }
+        ];
+
+        // 데이터 상태 관리
+        let gongsiData = initialGongsiData.map(item => ({
+            ...item,
+            writerDone: false,
+            checkerDone: false
+        }));
+
+        function renderItems(searchTerm = "") {
+            const grid = document.getElementById('itemGrid');
+            grid.innerHTML = '';
+            const term = searchTerm.trim();
+
+            const filteredData = term === "" 
+                ? gongsiData 
+                : gongsiData.filter(item => item.writer.includes(term) || item.checker.includes(term));
+
+            if (filteredData.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search-minus text-4xl mb-4 text-slate-300"></i>
+                        <p class="text-lg font-medium">검색 결과가 없습니다.</p>
+                        <p class="text-sm">성명을 다시 확인해주세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredData.forEach(item => {
+                const isWriterMatch = term !== "" && item.writer.includes(term);
+                const isCheckerMatch = term !== "" && item.checker.includes(term);
+                
+                const card = document.createElement('div');
+                card.className = `glass-card p-6 rounded-[2rem] shadow-sm cursor-pointer border-2 relative ${term !== "" ? 'highlight-card' : 'border-slate-100 bg-white'}`;
+                card.onclick = () => openModal(item);
+                
+                const completionIcons = `
+                    <div class="absolute bottom-6 right-6 flex gap-1">
+                        <i class="fas fa-check-circle ${item.writerDone ? 'text-emerald-500' : 'text-slate-200'} text-xs" title="작성완료"></i>
+                        <i class="fas fa-check-double ${item.checkerDone ? 'text-blue-500' : 'text-slate-200'} text-xs" title="확인완료"></i>
+                    </div>
+                `;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-slate-800 text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-widest">${item.id}</span>
+                        <div class="flex gap-2">
+                            <span class="status-badge verification-badge"><i class="fas fa-shield-check mr-1"></i>검증필수</span>
+                            <span class="status-badge ${item.type === '원자료취합' ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}">
+                                ${item.type}
+                            </span>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 leading-tight h-12 overflow-hidden">${item.title}</h3>
+                    <div class="flex items-center gap-3 text-sm pt-4 border-t border-slate-50 mr-8">
+                        <div class="flex-1 text-center">
+                            <p class="text-[10px] text-slate-400 font-bold mb-1">작성자</p>
+                            <p class="${isWriterMatch ? 'name-match' : 'font-bold text-slate-700'}">${item.writer}</p>
+                        </div>
+                        <div class="w-px h-6 bg-slate-100"></div>
+                        <div class="flex-1 text-center">
+                            <p class="text-[10px] text-slate-400 font-bold mb-1">확인자</p>
+                            <p class="${isCheckerMatch ? 'name-match' : 'font-bold text-slate-700'}">${item.checker}</p>
+                        </div>
+                    </div>
+                    ${completionIcons}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleStatus(id, role) {
+            const index = gongsiData.findIndex(d => d.id === id);
+            if (index !== -1) {
+                if (role === 'writer') {
+                    gongsiData[index].writerDone = !gongsiData[index].writerDone;
+                } else {
+                    gongsiData[index].checkerDone = !gongsiData[index].checkerDone;
+                }
+                openModal(gongsiData[index]); 
+                renderItems(document.getElementById('nameSearch').value); 
+            }
+        }
+
+        function openModal(item) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
+            
+            let sourceSection = '';
+            const methodHtml = item.method ? `
+                <div class="flex flex-col gap-1 mb-4">
+                    <span class="text-blue-500 font-bold text-[10px]">입력 형태 및 방식</span>
+                    <span class="bg-white px-4 py-3 rounded-xl border border-blue-100 font-black text-blue-800 text-base shadow-sm">${item.method}</span>
+                </div>
+            ` : '';
+
+            if (item.collect) {
+                sourceSection = `
+                    <div class="bg-orange-50 border border-orange-100 p-6 rounded-[2rem] h-full flex flex-col">
+                        <h4 class="text-orange-800 modal-label mb-4 flex items-center">
+                            <i class="fas fa-tools mr-2"></i>나이스 원자료 연계 정보
+                        </h4>
+                        ${methodHtml}
+                        <div class="bg-white border border-orange-100 text-orange-700 p-4 rounded-xl break-all leading-relaxed font-mono text-sm mb-3 whitespace-pre-line shadow-sm flex-grow">
+                            <span class="block text-[10px] font-bold text-orange-400 mb-1">연계 경로</span>
+                            ${item.collect.path}
+                        </div>
+                        <p class="text-orange-600 text-sm font-semibold"><i class="fas fa-info-circle mr-1 text-orange-400"></i>${item.collect.manual}</p>
+                    </div>
+                `;
+            } else {
+                sourceSection = `
+                    <div class="bg-blue-50 border border-blue-100 p-6 rounded-[2rem] h-full flex flex-col">
+                        <h4 class="text-blue-800 modal-label mb-4 flex items-center">
+                            <i class="fas fa-cloud-upload mr-2"></i>입력 상세 정보
+                        </h4>
+                        <div class="flex flex-col gap-2 flex-grow">
+                            ${methodHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `
+                <div class="mb-8 flex justify-between items-start">
+                    <div class="max-w-[85%]">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">정시 1차</span>
+                            <span class="text-slate-400 font-bold text-sm tracking-widest">${item.id}</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-slate-800 leading-tight">${item.title}</h2>
+                    </div>
+                    <div class="text-right">
+                        <span class="status-badge ${item.type === '원자료취합' ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'} text-xs px-3 py-1">
+                            ${item.type}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mb-8">
+                    <div class="flex-1 bg-slate-50 p-5 rounded-3xl border border-slate-100 flex flex-col gap-4 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-500 shadow-sm"><i class="fas fa-pen text-sm"></i></div>
+                            <div>
+                                <p class="modal-label text-slate-400">작성자</p>
+                                <p class="text-lg font-black text-slate-800">${item.writer}</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleStatus('${item.id}', 'writer')" 
+                            class="done-btn w-full py-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 ${item.writerDone ? 'done-active' : 'bg-white border-slate-200 text-slate-400 hover:border-emerald-300 hover:text-emerald-500'}">
+                            <i class="fas ${item.writerDone ? 'fa-check-circle' : 'fa-circle'}"></i>
+                            ${item.writerDone ? '작성 완료됨' : '작성 완료'}
+                        </button>
+                    </div>
+                    
+                    <div class="flex-1 bg-slate-50 p-5 rounded-3xl border border-slate-100 flex flex-col gap-4 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-sm"><i class="fas fa-check text-sm"></i></div>
+                            <div>
+                                <p class="modal-label text-slate-400">확인자</p>
+                                <p class="text-lg font-black text-slate-800">${item.checker}</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleStatus('${item.id}', 'checker')" 
+                            class="done-btn w-full py-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 ${item.checkerDone ? 'done-active' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500'}">
+                            <i class="fas ${item.checkerDone ? 'fa-check-double' : 'fa-circle'}"></i>
+                            ${item.checkerDone ? '최종 확인됨' : '확인 완료'}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4 items-stretch">
+                    <div class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex flex-col shadow-sm">
+                        <h4 class="text-slate-800 modal-label mb-4 flex items-center">
+                            <i class="fas fa-align-left mr-2 text-blue-500"></i>항목 요약 및 기준
+                        </h4>
+                        <div class="text-slate-700 modal-text-lg font-medium whitespace-pre-line flex-grow">
+                            ${item.desc}
+                        </div>
+                    </div>
+                    <div class="h-full">
+                        ${sourceSection}
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('nameSearch');
+            searchInput.addEventListener('input', (e) => renderItems(e.target.value));
+            renderItems();
+        });
+
+        window.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') closeModal(); 
+        });
+    </script>
+</body>
+</html>

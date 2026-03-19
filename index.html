@@ -17,12 +17,16 @@
         .verification-badge { background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b; }
         
-        /* 모달 내 텍스트 크기 강화 */
+        /* 모달 스타일 */
         .modal-text-lg { font-size: 1.05rem; line-height: 1.7; }
         .modal-label { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
         
         .done-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .done-active { background-color: #10b981 !important; color: white !important; border-color: #059669 !important; }
+        
+        /* 링크 스타일 */
+        .external-link { text-decoration: underline; text-underline-offset: 4px; transition: opacity 0.2s; }
+        .external-link:hover { opacity: 0.8; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -31,20 +35,35 @@
         <header class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-slate-800 mb-6 tracking-tight">🏫 2026년 제1차(4월) 초등학교 정보공시</h1>
             
+            <!-- 핵심 안내 및 문의처 -->
             <div class="bg-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6 text-left">
-                <h3 class="font-bold text-xl mb-3"><i class="fas fa-school mr-2"></i>초등 공시 핵심 안내</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">
-                        <p class="font-bold mb-1 underline decoration-blue-300">문의처</p>
-                        <p class="text-blue-100 font-medium tracking-wide">☎ 정보공시 콜센터: 1544-0079 (2-1)</p>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
+                    <h3 class="font-bold text-xl"><i class="fas fa-info-circle mr-2"></i>정보공시 핵심 안내 및 문의처</h3>
+                    <span class="bg-white/20 px-3 py-1 rounded-lg text-xs border border-white/30">나이스 [학교정보관리] 현행화 필수</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white/10 p-4 rounded-2xl border border-white/20">
+                        <p class="font-bold mb-2 text-blue-100 flex items-center">
+                            <i class="fas fa-headset mr-2"></i>1) 초·중등 정보공시 콜센터
+                        </p>
+                        <p class="text-lg font-black tracking-wider">☎ 1544-0079 <span class="text-sm font-normal text-blue-200">누른 후 2번 → 1번</span></p>
                     </div>
-                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">
-                        <p class="font-bold mb-1 underline decoration-blue-300">필수 확인</p>
-                        <p class="text-blue-100 font-medium">나이스 [학교정보관리] 현행화 후 공시 시작</p>
+                    <div class="bg-white/10 p-4 rounded-2xl border border-white/20">
+                        <p class="font-bold mb-2 text-blue-100 flex items-center">
+                            <i class="fas fa-question-circle mr-2"></i>2) 온라인 질의 및 도움말
+                        </p>
+                        <ul class="text-sm space-y-1 text-blue-50">
+                            <li>• 나이스 입력 화면 우측 상단 <span class="font-bold text-white underline">‘질의’</span> 등록</li>
+                            <li>• <span class="font-bold text-white">EIS 정보공시 도우미</span> 
+                                (<a href="https://cafe.naver.com/helpmest" target="_blank" class="external-link font-bold text-white">cafe.naver.com/helpmest</a>)
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
+            <!-- 마감 일정 -->
             <div class="bg-white border-2 border-red-100 rounded-3xl p-5 mb-8 shadow-sm flex flex-col md:flex-row justify-around items-center gap-4">
                 <div class="text-red-600 font-bold"><i class="fas fa-calendar-check mr-2"></i>초등 정시 1차 마감 일정</div>
                 <div class="flex gap-8">
@@ -59,7 +78,7 @@
         <div class="sticky top-4 z-10 mb-10">
             <div class="relative group">
                 <input type="text" id="nameSearch" autocomplete="off"
-                    placeholder="담당자 성명을 입력하세요 (예: 손혜림)" 
+                    placeholder="담당자 성명을 입력하세요" 
                     class="w-full p-6 pl-14 rounded-2xl border-4 border-white shadow-2xl focus:border-blue-500 focus:outline-none transition-all text-xl font-bold bg-white/80 backdrop-blur-md">
                 <i class="fas fa-user-search absolute left-6 top-7 text-blue-500 text-xl"></i>
             </div>
@@ -80,7 +99,7 @@
     </div>
 
     <script>
-        // 초기 데이터 로드
+        // 초기 데이터 (이전과 동일)
         const initialGongsiData = [
             { id: "2-가", title: "학교교육과정 편성·운영 및 평가에 관한 사항", writer: "김소리", checker: "곽성욱", type: "직접입력", 
               desc:`• 자료 기준일: 2026. 4. 1 \n• 공시 횟수: 연 1회`,
@@ -158,7 +177,6 @@
             }
         ];
 
-        // 데이터 상태 관리
         let gongsiData = initialGongsiData.map(item => ({
             ...item,
             writerDone: false,
@@ -175,51 +193,37 @@
                 : gongsiData.filter(item => item.writer.includes(term) || item.checker.includes(term));
 
             if (filteredData.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-search-minus text-4xl mb-4 text-slate-300"></i>
-                        <p class="text-lg font-medium">검색 결과가 없습니다.</p>
-                        <p class="text-sm">성명을 다시 확인해주세요.</p>
-                    </div>
-                `;
+                grid.innerHTML = `<div class="empty-state"><p class="text-lg font-medium">검색 결과가 없습니다.</p></div>`;
                 return;
             }
 
             filteredData.forEach(item => {
-                const isWriterMatch = term !== "" && item.writer.includes(term);
-                const isCheckerMatch = term !== "" && item.checker.includes(term);
-                
                 const card = document.createElement('div');
                 card.className = `glass-card p-6 rounded-[2rem] shadow-sm cursor-pointer border-2 relative ${term !== "" ? 'highlight-card' : 'border-slate-100 bg-white'}`;
                 card.onclick = () => openModal(item);
                 
                 const completionIcons = `
                     <div class="absolute bottom-6 right-6 flex gap-1">
-                        <i class="fas fa-check-circle ${item.writerDone ? 'text-emerald-500' : 'text-slate-200'} text-xs" title="작성완료"></i>
-                        <i class="fas fa-check-double ${item.checkerDone ? 'text-blue-500' : 'text-slate-200'} text-xs" title="확인완료"></i>
+                        <i class="fas fa-check-circle ${item.writerDone ? 'text-emerald-500' : 'text-slate-200'} text-xs"></i>
+                        <i class="fas fa-check-double ${item.checkerDone ? 'text-blue-500' : 'text-slate-200'} text-xs"></i>
                     </div>
                 `;
 
                 card.innerHTML = `
                     <div class="flex justify-between items-center mb-4">
                         <span class="bg-slate-800 text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-widest">${item.id}</span>
-                        <div class="flex gap-2">
-                            <span class="status-badge verification-badge"><i class="fas fa-shield-check mr-1"></i>검증필수</span>
-                            <span class="status-badge ${item.type === '원자료취합' ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}">
-                                ${item.type}
-                            </span>
-                        </div>
+                        <span class="status-badge ${item.type === '원자료취합' ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}">${item.type}</span>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 mb-6 leading-tight h-12 overflow-hidden">${item.title}</h3>
                     <div class="flex items-center gap-3 text-sm pt-4 border-t border-slate-50 mr-8">
                         <div class="flex-1 text-center">
                             <p class="text-[10px] text-slate-400 font-bold mb-1">작성자</p>
-                            <p class="${isWriterMatch ? 'name-match' : 'font-bold text-slate-700'}">${item.writer}</p>
+                            <p class="${term !== "" && item.writer.includes(term) ? 'name-match' : 'font-bold text-slate-700'}">${item.writer}</p>
                         </div>
                         <div class="w-px h-6 bg-slate-100"></div>
                         <div class="flex-1 text-center">
                             <p class="text-[10px] text-slate-400 font-bold mb-1">확인자</p>
-                            <p class="${isCheckerMatch ? 'name-match' : 'font-bold text-slate-700'}">${item.checker}</p>
+                            <p class="${term !== "" && item.checker.includes(term) ? 'name-match' : 'font-bold text-slate-700'}">${item.checker}</p>
                         </div>
                     </div>
                     ${completionIcons}
@@ -231,11 +235,8 @@
         function toggleStatus(id, role) {
             const index = gongsiData.findIndex(d => d.id === id);
             if (index !== -1) {
-                if (role === 'writer') {
-                    gongsiData[index].writerDone = !gongsiData[index].writerDone;
-                } else {
-                    gongsiData[index].checkerDone = !gongsiData[index].checkerDone;
-                }
+                if (role === 'writer') gongsiData[index].writerDone = !gongsiData[index].writerDone;
+                else gongsiData[index].checkerDone = !gongsiData[index].checkerDone;
                 openModal(gongsiData[index]); 
                 renderItems(document.getElementById('nameSearch').value); 
             }
@@ -245,125 +246,65 @@
             const modal = document.getElementById('modal');
             const content = document.getElementById('modalContent');
             
-            let sourceSection = '';
-            const methodHtml = item.method ? `
-                <div class="flex flex-col gap-1 mb-4">
-                    <span class="text-blue-500 font-bold text-[10px]">입력 형태 및 방식</span>
+            let sourceSection = item.collect ? `
+                <div class="bg-orange-50 border border-orange-100 p-6 rounded-[2rem] h-full flex flex-col">
+                    <h4 class="text-orange-800 modal-label mb-4 flex items-center"><i class="fas fa-tools mr-2"></i>나이스 원자료 연계</h4>
+                    <div class="bg-white p-4 rounded-xl border border-orange-100 font-mono text-sm mb-3 shadow-sm flex-grow">
+                        <span class="block text-[10px] font-bold text-orange-400 mb-1">연계 경로</span>
+                        ${item.collect.path}
+                    </div>
+                    <p class="text-orange-600 text-sm font-semibold">${item.collect.manual}</p>
+                </div>
+            ` : `
+                <div class="bg-blue-50 border border-blue-100 p-6 rounded-[2rem] h-full flex flex-col">
+                    <h4 class="text-blue-800 modal-label mb-4 flex items-center"><i class="fas fa-cloud-upload mr-2"></i>입력 방식</h4>
                     <span class="bg-white px-4 py-3 rounded-xl border border-blue-100 font-black text-blue-800 text-base shadow-sm">${item.method}</span>
                 </div>
-            ` : '';
-
-            if (item.collect) {
-                sourceSection = `
-                    <div class="bg-orange-50 border border-orange-100 p-6 rounded-[2rem] h-full flex flex-col">
-                        <h4 class="text-orange-800 modal-label mb-4 flex items-center">
-                            <i class="fas fa-tools mr-2"></i>나이스 원자료 연계 정보
-                        </h4>
-                        ${methodHtml}
-                        <div class="bg-white border border-orange-100 text-orange-700 p-4 rounded-xl break-all leading-relaxed font-mono text-sm mb-3 whitespace-pre-line shadow-sm flex-grow">
-                            <span class="block text-[10px] font-bold text-orange-400 mb-1">연계 경로</span>
-                            ${item.collect.path}
-                        </div>
-                        <p class="text-orange-600 text-sm font-semibold"><i class="fas fa-info-circle mr-1 text-orange-400"></i>${item.collect.manual}</p>
-                    </div>
-                `;
-            } else {
-                sourceSection = `
-                    <div class="bg-blue-50 border border-blue-100 p-6 rounded-[2rem] h-full flex flex-col">
-                        <h4 class="text-blue-800 modal-label mb-4 flex items-center">
-                            <i class="fas fa-cloud-upload mr-2"></i>입력 상세 정보
-                        </h4>
-                        <div class="flex flex-col gap-2 flex-grow">
-                            ${methodHtml}
-                        </div>
-                    </div>
-                `;
-            }
+            `;
 
             content.innerHTML = `
                 <div class="mb-8 flex justify-between items-start">
-                    <div class="max-w-[85%]">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">정시 1차</span>
-                            <span class="text-slate-400 font-bold text-sm tracking-widest">${item.id}</span>
-                        </div>
-                        <h2 class="text-3xl font-black text-slate-800 leading-tight">${item.title}</h2>
-                    </div>
-                    <div class="text-right">
-                        <span class="status-badge ${item.type === '원자료취합' ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'} text-xs px-3 py-1">
-                            ${item.type}
-                        </span>
+                    <div>
+                        <span class="text-slate-400 font-bold text-sm tracking-widest">${item.id}</span>
+                        <h2 class="text-2xl font-black text-slate-800 leading-tight">${item.title}</h2>
                     </div>
                 </div>
 
                 <div class="flex gap-4 mb-8">
-                    <div class="flex-1 bg-slate-50 p-5 rounded-3xl border border-slate-100 flex flex-col gap-4 shadow-sm relative overflow-hidden">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-500 shadow-sm"><i class="fas fa-pen text-sm"></i></div>
-                            <div>
-                                <p class="modal-label text-slate-400">작성자</p>
-                                <p class="text-lg font-black text-slate-800">${item.writer}</p>
-                            </div>
-                        </div>
-                        <button onclick="toggleStatus('${item.id}', 'writer')" 
-                            class="done-btn w-full py-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 ${item.writerDone ? 'done-active' : 'bg-white border-slate-200 text-slate-400 hover:border-emerald-300 hover:text-emerald-500'}">
-                            <i class="fas ${item.writerDone ? 'fa-check-circle' : 'fa-circle'}"></i>
+                    <div class="flex-1 bg-slate-50 p-5 rounded-3xl border border-slate-100 flex flex-col gap-4">
+                        <p class="modal-label text-slate-400">작성자: ${item.writer}</p>
+                        <button onclick="toggleStatus('${item.id}', 'writer')" class="done-btn w-full py-3 rounded-xl border-2 font-bold ${item.writerDone ? 'done-active' : 'bg-white border-slate-200 text-slate-400'}">
                             ${item.writerDone ? '작성 완료됨' : '작성 완료'}
                         </button>
                     </div>
-                    
-                    <div class="flex-1 bg-slate-50 p-5 rounded-3xl border border-slate-100 flex flex-col gap-4 shadow-sm relative overflow-hidden">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-sm"><i class="fas fa-check text-sm"></i></div>
-                            <div>
-                                <p class="modal-label text-slate-400">확인자</p>
-                                <p class="text-lg font-black text-slate-800">${item.checker}</p>
-                            </div>
-                        </div>
-                        <button onclick="toggleStatus('${item.id}', 'checker')" 
-                            class="done-btn w-full py-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 ${item.checkerDone ? 'done-active' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500'}">
-                            <i class="fas ${item.checkerDone ? 'fa-check-double' : 'fa-circle'}"></i>
+                    <div class="flex-1 bg-slate-50 p-5 rounded-3xl border border-slate-100 flex flex-col gap-4">
+                        <p class="modal-label text-slate-400">확인자: ${item.checker}</p>
+                        <button onclick="toggleStatus('${item.id}', 'checker')" class="done-btn w-full py-3 rounded-xl border-2 font-bold ${item.checkerDone ? 'done-active' : 'bg-white border-slate-200 text-slate-400'}">
                             ${item.checkerDone ? '최종 확인됨' : '확인 완료'}
                         </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4 items-stretch">
-                    <div class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex flex-col shadow-sm">
-                        <h4 class="text-slate-800 modal-label mb-4 flex items-center">
-                            <i class="fas fa-align-left mr-2 text-blue-500"></i>항목 요약 및 기준
-                        </h4>
-                        <div class="text-slate-700 modal-text-lg font-medium whitespace-pre-line flex-grow">
-                            ${item.desc}
-                        </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                    <div class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex flex-col">
+                        <h4 class="text-slate-800 modal-label mb-4">항목 기준</h4>
+                        <div class="text-slate-700 modal-text-lg font-medium whitespace-pre-line">${item.desc}</div>
                     </div>
-                    <div class="h-full">
-                        ${sourceSection}
-                    </div>
+                    <div>${sourceSection}</div>
                 </div>
             `;
-            
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById('modal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('nameSearch');
-            searchInput.addEventListener('input', (e) => renderItems(e.target.value));
-            renderItems();
-        });
-
-        window.addEventListener('keydown', (e) => { 
-            if (e.key === 'Escape') closeModal(); 
-        });
+        document.getElementById('nameSearch').addEventListener('input', (e) => renderItems(e.target.value));
+        document.addEventListener('DOMContentLoaded', () => renderItems());
     </script>
 </body>
 </html>
